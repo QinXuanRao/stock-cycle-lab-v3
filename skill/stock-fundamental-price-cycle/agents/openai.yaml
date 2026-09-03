@@ -1,0 +1,4 @@
+interface:
+  display_name: "跨市场基本面价格周期"
+  short_description: "从原始财报和日线评估A股与美股，独立工具与技能共用核心"
+  default_prompt: "使用 $stock-fundamental-price-cycle 评估指定股票池，刷新数据并运行独立工具，分开输出三层名单。"

@@ -1,0 +1,90 @@
+{
+  "version": "3.0.0",
+  "technical": {
+    "emaFast": 10,
+    "emaSlow": 20,
+    "atrWindow": 14,
+    "warmup": 120,
+    "volumeWindow": 20,
+    "regimeWindow": 5,
+    "regimeHits": 3,
+    "chopWindow": 20,
+    "chopCrosses": 3,
+    "chopSeparation": 0.005,
+    "extensionATR": 2,
+    "extensionVolume": 1.5,
+    "breakVolume": 1.2,
+    "supportWindow": 60,
+    "supportToleranceATR": 0.5,
+    "wedgeWindow": 5,
+    "contractionRatio": 0.8,
+    "wedgeSeparation": 0.01,
+    "rsWindow": 20,
+    "crossbackMin": 2,
+    "crossbackMax": 15,
+    "baseMin": 5,
+    "baseMax": 20,
+    "baseWidth": 0.15,
+    "baseMaxATR": 6,
+    "bottomWindow": 10,
+    "weeklySupportWeeks": 12
+  },
+  "markets": {
+    "CN": {
+      "currency": "CNY",
+      "timezone": "Asia/Shanghai",
+      "capBasis": "circulating_a_share",
+      "capMin": 5000000000,
+      "capMax": 50000000000,
+      "amountMin": 200000000,
+      "profitYoYMin": 30,
+      "epsMin": 0,
+      "listingMin": 120,
+      "lockedLimitMax": 3,
+      "adaptationAcknowledged": true
+    },
+    "US": {
+      "currency": "USD",
+      "timezone": "America/New_York",
+      "capBasis": "public_float",
+      "capMin": 1000000000,
+      "capMax": 10000000000,
+      "amountMin": 10000000,
+      "profitYoYMin": 30,
+      "epsMin": 0,
+      "listingMin": 120,
+      "lockedLimitMax": null,
+      "adaptationAcknowledged": true
+    }
+  },
+  "overrides": [
+    {
+      "path": "markets.US.capMin",
+      "old": null,
+      "value": 1000000000,
+      "reason": "SYNTHETIC DEMO ONLY — not user investment thresholds",
+      "provenance": "user-specified"
+    },
+    {
+      "path": "markets.US.capMax",
+      "old": null,
+      "value": 10000000000,
+      "reason": "SYNTHETIC DEMO ONLY — not user investment thresholds",
+      "provenance": "user-specified"
+    },
+    {
+      "path": "markets.US.amountMin",
+      "old": null,
+      "value": 10000000,
+      "reason": "SYNTHETIC DEMO ONLY — not user investment thresholds",
+      "provenance": "user-specified"
+    },
+    {
+      "path": "markets.US.adaptationAcknowledged",
+      "old": false,
+      "value": true,
+      "reason": "SYNTHETIC DEMO ONLY — not user investment thresholds",
+      "provenance": "user-specified"
+    }
+  ]
+}

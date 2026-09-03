@@ -1,0 +1,20 @@
+# Local credentials, data and generated research runs are not release sources.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+data/
+private-data/
+cache/
+outputs/
+results/
+*-run/
+smoke-*/
+backup-*/
+*.log

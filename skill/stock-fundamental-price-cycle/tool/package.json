@@ -1,0 +1,9 @@
+{
+  "name": "stock-cycle-lab",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Offline cross-market fundamental and price-cycle research tool",
+  "engines": {"node": ">=20"},
+  "scripts": {"test": "node --test tests.js"},
+  "bin": {"stock-cycle-lab": "./cli.js"}
+}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; worker-src blob:; img-src data: blob:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Stock Cycle Lab · 跨市场股票评估</title>
+<style>
+:root{--bg:#f4f5f7;--ink:#172637;--muted:#627184;--line:#dde3ea;--navy:#122a42;--blue:#1d5da7;--green:#187b59;--amber:#a96812;--red:#af3a3a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+header{background:var(--navy);color:#fff;padding:30px max(24px,calc((100vw - 1400px)/2));border-bottom:4px solid #efb75b}
+.eyebrow{font-size:12px;letter-spacing:.16em;color:#b1c7df}h1{font-size:30px;line-height:1.3;margin:8px 0}h2{font-size:17px;margin:0 0 12px}h3{font-size:14px;margin:0 0 8px}p{margin:8px 0}
+.subtitle{color:#bdcfdf;max-width:950px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.chip{border:1px solid #557089;border-radius:30px;padding:3px 12px;font-size:12px}
+main{max-width:1448px;padding:24px;margin:auto}.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:0 2px 4px #122a4204}
+.muted{color:var(--muted);font-size:12px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row.space{justify-content:space-between}button,.file-label{border:1px solid #c7d1de;border-radius:6px;background:#fff;color:var(--ink);padding:9px 14px;font:inherit;cursor:pointer}
+button.primary{background:var(--blue);border-color:var(--blue);color:white}button:disabled{opacity:.45;cursor:default}button:hover:not(:disabled),.file-label:hover{filter:brightness(.96)}
+input,select,textarea{font:inherit;padding:8px 10px;border:1px solid #c7d1de;border-radius:6px;color:var(--ink);max-width:100%;background:white}
+input[type=file]{width:100%;padding:15px;background:#f6f8fb;border-style:dashed}input[type=checkbox]{accent-color:var(--blue)}
+textarea{width:100%;height:150px;resize:vertical;font:12px/1.5 ui-monospace,monospace}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.field input,.field select{width:100%}
+details{margin-top:14px}summary{cursor:pointer;color:var(--blue)}.note{border-left:3px solid #efb75b;background:#fff8eb;padding:10px 14px;font-size:12px;margin-top:14px}.success{color:var(--green)}.error{color:var(--red)}
+.toolbar{display:flex;gap:12px;align-items:center;margin:18px 0;flex-wrap:wrap}.toolbar .status{flex:1;min-width:250px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}.stat{background:white;border:1px solid var(--line);border-radius:10px;padding:16px 20px}.stat .value{font-size:30px;font-weight:650;line-height:1.2}.stat .label{font-size:12px;color:var(--muted);margin-top:5px}.stat.featured{background:var(--navy);color:white}.stat.featured .label{color:#bed0df}
+.hidden{display:none!important}.table-wrap{overflow:auto;max-height:580px;border:1px solid var(--line);border-radius:8px;margin-top:14px}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12px}th{position:sticky;top:0;background:#edf2f7;text-align:left;padding:11px 13px;z-index:1}td{border-top:1px solid #e8edf2;padding:11px 13px}tbody tr:hover{background:#f7f9fc}td .secondary{display:block;color:var(--muted);font-size:11px}
+.badge{border-radius:4px;padding:2px 6px;font-size:11px}.pass{background:#e9f5ee;color:var(--green)}.fail{background:#faeaea;color:var(--red)}.unknown{background:#fff4dc;color:var(--amber)}.small{padding:4px 8px;font-size:12px}
+.empty{padding:32px;text-align:center;color:var(--muted)}pre{overflow:auto;white-space:pre-wrap;word-break:break-word;background:#101f2f;color:#d8e7f3;padding:18px;border-radius:8px;font:12px/1.65 ui-monospace,monospace;max-height:600px}
+dialog{border:1px solid var(--line);border-radius:12px;max-width:1000px;width:92%;max-height:90vh;padding:24px}dialog::backdrop{background:#10223788}
+footer{padding:24px 0;color:var(--muted);font-size:12px}.hash{font-family:ui-monospace,monospace;font-size:11px;overflow-wrap:anywhere}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}header{padding:22px}main{padding:16px}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="eyebrow">STOCK CYCLE LAB / LOCAL RESEARCH TOOL</div>
+ <h1>基本面 × 价格周期</h1>
+ <div class="subtitle">跨市场、可复算的股票评估工具。导入财报与日线，由程序计算筛选和周期状态；不依赖聊天记忆，不把测试股票池当成能力边界。</div>
+ <div class="chips"><span class="chip">A股 · 美股</span><span class="chip">本地离线 · 不上传数据</span><span class="chip">浏览器 / 命令行共用核心</span><span class="chip">v3.0.0</span></div>
+</header>
+<main>
+ <div class="grid">
+  <section class="panel">
+   <h2>01 / 导入股票池与数据</h2>
+   <p class="muted">不限自选股或行业。导入一个标准 JSON 数据包，或同时选择 metadata.json 及五个 CSV 文件。不会自动连接账户或获取实时行情。</p>
+   <label for="data-files" class="muted">本地数据文件</label>
+   <input type="file" id="data-files" accept=".json,.csv" multiple>
+   <div class="row" style="margin-top:12px"><button id="demo">加载合成演示</button><button id="download-input" disabled>导出当前输入</button><button id="template">下载空模板</button></div>
+   <div id="input-info" class="muted" style="margin-top:12px">尚未加载数据。可先使用合成演示检验工具，不代表真实股票。</div>
+   <details><summary>也可以粘贴完整 JSON 数据包</summary><textarea id="paste-data" aria-label="JSON数据包"></textarea><button id="paste-load">加载粘贴数据</button></details>
+   <details><summary>数据合同与覆盖要求</summary>
+    <p class="muted">输入包括：分析截至时间、带时区收盘时间的交易日历、基准日线、证券身份、市值快照、实际公告时间、可比累计财务数据、OHLCV和成交额。程序从累计值推导单季归母/普通股股东净利润与EPS TTM。</p>
+    <p class="muted">名称/代码、财报、交易状态、复权及股票池覆盖需要来源。缺项会标记 unknown，不会自动放行。全市场声明必须有证券主表的预期数量和覆盖证明。美股可指定 fiscal_year，不要求财年等于自然年。</p>
+   </details>
+  </section>
+  <section class="panel">
+   <div class="row space"><h2>02 / 市场参数</h2><select id="profile-market" aria-label="参数市场"><option value="CN">A股 / CNY</option><option value="US">美股 / USD</option></select></div>
+   <div class="fields">
+    <div class="field"><label for="cap-min" id="cap-min-label">市值下限（亿元）</label><input id="cap-min" type="number" min="0" step="any"></div>
+    <div class="field"><label for="cap-max" id="cap-max-label">市值上限（亿元）</label><input id="cap-max" type="number" min="0" step="any"></div>
+    <div class="field"><label for="amount-min" id="amount-label">20日均成交额下限（亿元）</label><input id="amount-min" type="number" min="0" step="any"></div>
+    <div class="field"><label for="profit-min">单季净利润同比须大于（%）</label><input id="profit-min" type="number" step="any"></div>
+    <div class="field"><label for="cap-basis">市值口径</label><select id="cap-basis"><option value="circulating_a_share">A股流通市值</option><option value="public_float">美股 public float</option><option value="total_market_cap">美股总市值（显式变体）</option></select></div>
+   </div>
+   <label id="us-ack-row" class="muted hidden"><input id="us-ack" type="checkbox"> 我确认使用独立美元门槛，并了解美股市值口径是研究适配，未验证盈利能力。</label>
+   <div class="row" style="margin-top:12px"><button id="apply-profile">应用参数</button><button id="export-config">导出配置</button><button id="reset-config">恢复默认</button></div>
+   <div class="note" id="parameter-note">A股保留原三门槛；美股美元市值/成交额默认留空。缺少美股参数时仍能分析形态，但不给完整策略资格。</div>
+   <details><summary>高级配置 JSON（可移植、带修改记录）</summary><textarea id="config-json" aria-label="配置JSON"></textarea><button id="apply-config">应用完整配置</button><div class="muted">参数修改必须在 overrides 记录原值、新值和原因；每次结果保存配置指纹。</div></details>
+  </section>
+ </div>
+ <div class="toolbar"><button class="primary" id="run" disabled>运行评估</button><button id="cancel" disabled>取消</button><span id="status" class="status muted" role="status" aria-live="polite">准备就绪 · 所有计算都在此设备完成</span></div>
+ <div class="note hidden" id="demo-banner">合成演示：以下证券、行情、财报、交易日历和美元参数均是测试数据，不可用于投资决策。</div>
+ <div class="stats">
+  <div class="stat"><div class="value" id="count-total">—</div><div class="label">输入股票总数</div></div>
+  <div class="stat"><div class="value" id="count-fund">—</div><div class="label">基本面通过</div></div>
+  <div class="stat"><div class="value" id="count-dual">—</div><div class="label">基本面 + 可交易性通过</div></div>
+  <div class="stat featured"><div class="value" id="count-eligible">—</div><div class="label">完整策略资格 · 允许为零</div></div>
+ </div>
+ <section class="panel">
+  <div class="row space"><h2>03 / 评估结果</h2><div class="row"><button id="export-json" disabled>导出完整 JSON</button><button id="export-csv" disabled>导出结果 CSV</button><button id="manifest" disabled>查看运行清单</button></div></div>
+  <div class="row"><input id="search" placeholder="搜索代码 / 名称" aria-label="搜索代码或名称"><select id="layer" aria-label="筛选层级"><option value="all">全部结果</option><option value="eligible">完整策略资格</option><option value="dual">基本面 + 可交易性</option><option value="fundamental">基本面通过</option><option value="unknown">证据不足</option></select><span id="coverage" class="muted">覆盖率：未评估</span></div>
+  <div class="table-wrap"><table><thead><tr><th>市场 / 股票</th><th>基本面</th><th>净利同比 / EPS</th><th>可交易性</th><th>市场环境</th><th>当日事件 / 活动周期</th><th>完整策略资格</th><th>模型动作</th><th>证据</th></tr></thead><tbody id="results-body"><tr><td colspan="9" class="empty">导入数据后运行。旧名单、旧日期和旧市场结论不会自动复用。</td></tr></tbody></table></div>
+  <div class="row space" style="margin-top:12px"><span id="page-info" class="muted"></span><div class="row"><button id="prev-page" disabled>上一页</button><button id="next-page" disabled>下一页</button></div></div>
+  <div id="run-meta" class="muted hash" style="margin-top:12px"></div>
+ </section>
+ <footer>仅用于研究，不下单、不保证收益。信号不等于可成交；停牌、跳空、滑点及市场制度仍需评估。美国和中国的规则分开处理，不做隐式汇率换算。独立运行支持现代桌面浏览器；大规模任务可使用同包 Node 命令行。</footer>
+</main>
+<dialog id="detail-dialog"><div class="row space"><h2 id="detail-title">证据</h2><button id="close-detail">关闭</button></div><pre id="detail-text"></pre></dialog>
+<script id="engine-source">/*__ENGINE__*/</script>
+<script>/*__ADAPTERS__*/</script>
+<script>/*__DEMO__*/</script>
+<script>/*__UI__*/</script>
+</body></html>

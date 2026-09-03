@@ -1,0 +1,34 @@
+{
+  "schema_version": 3,
+  "demo": true,
+  "as_of": "2026-09-03T22:00:00Z",
+  "universe": {
+    "label": "合成演示 / Synthetic, not real market data",
+    "scope": "provided",
+    "expected_count": 2,
+    "missing_partitions": [],
+    "coverage_verified": true,
+    "snapshot_at": "2026-09-03T21:00:00Z",
+    "source": "SYNTHETIC"
+  },
+  "markets": {
+    "CN": {
+      "calendar_source": "SYNTHETIC weekdays, NOT an exchange calendar",
+      "calendar_verified_through": "2026-09-04",
+      "benchmark": {
+        "id": "CN_SYNTHETIC",
+        "source": "SYNTHETIC",
+        "return_basis": "total_return"
+      }
+    },
+    "US": {
+      "calendar_source": "SYNTHETIC weekdays, NOT an exchange calendar",
+      "calendar_verified_through": "2026-09-03",
+      "benchmark": {
+        "id": "US_SYNTHETIC",
+        "source": "SYNTHETIC",
+        "return_basis": "total_return"
+      }
+    }
+  }
+}

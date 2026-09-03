@@ -1,0 +1,4 @@
+interface:
+  display_name: "基本面价格周期（旧名兼容）"
+  short_description: "转入跨市场独立工具，评估A股或美股，不限历史测试股票池"
+  default_prompt: "使用 $a-share-fundamental-price-cycle 的新版跨市场工具评估指定股票池，并分别输出三层名单。"
